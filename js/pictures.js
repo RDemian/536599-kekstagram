@@ -163,7 +163,7 @@ var displayBigPicture = function (photosElement) {
 // ф-ция скрытия блока
 var hideBlock = function (block) {
   block.classList.add('visually-hidden');
-}
+};
 
 // Вызываем функцию заполнения тестового массива с нужным количеством фото
 photos = fillPhotos(25);
