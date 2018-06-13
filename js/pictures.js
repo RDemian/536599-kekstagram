@@ -1,6 +1,8 @@
 'use strict';
 
 var photos = [];
+var socialCommentCount = document.querySelector('.social__comment-count');
+var socialLoadmore = document.querySelector('.social__loadmore');
 
 // функция генерации случайного целого числа в заданном диапазоне
 // допустимо так объявлять функции, в контексте этого проекта?
@@ -88,11 +90,8 @@ var fillPhotos = function (countPhotos) {
   return photos;
 };
 
-// Вызываем функцию заполнения тестового массива с нужным количеством фото
-photos = fillPhotos(25);
-
 // ф-ция вывода массива фото в документ
-var createNewPicture = function (addedPhotos) {
+var appendNewPhotos = function (addedPhotos) {
 
   var picturesContainer = document.querySelector('.pictures');
   var contentPictureTemplate = document.querySelector('#picture').content;
@@ -110,13 +109,12 @@ var createNewPicture = function (addedPhotos) {
   picturesContainer.appendChild(fragment);
 };
 
-createNewPicture(photos);
-
 // ф-ция формирования увеличенного изображения
-// При добавлении элемента разметки какие кавычки использовать?
 var createNewComment = function (currentComment) {
   var newSocialComment = document.createElement('li');
-  newSocialComment.classList.add('social__comment social__comment--text');
+  newSocialComment.classList.add('social__comment');
+  newSocialComment.classList.add('social__comment--text');
+  // newSocialComment.classList.add('social__comment social__comment--text');
   var socialPicture = document.createElement('img');
   socialPicture.classList.add('social__picture');
   socialPicture.src = 'img/avatar-' + getRandomInt(1, 6) + '.svg';
@@ -124,7 +122,10 @@ var createNewComment = function (currentComment) {
   socialPicture.width = '35';
   socialPicture.height = '35';
   newSocialComment.appendChild(socialPicture);
-  newSocialComment.textContent = currentComment;
+  var socialText = document.createElement('p');
+  socialText.classList.add('social__text');
+  socialText.textContent = currentComment;
+  newSocialComment.appendChild(socialText);
   return newSocialComment;
 };
 
@@ -136,17 +137,40 @@ var displayBigPicture = function (photosElement) {
   var bigPicturelikesCount = bigPicture.querySelector('.likes-count');
   var bigPictureCommentsСount = bigPicture.querySelector('.comments-count');
   var bigPictureListComments = bigPicture.querySelector('.social__comments');
+  var fragment = document.createDocumentFragment();
 
   bigPicture.classList.remove('hidden');
   bigPictureImg.src = photosElement.url;
-  //bigPicturelikesCount.classList.add('hidden');
-  bigPicturelikesCount.textContent = 'asdf';//photosElement.likes;
+  // bigPicturelikesCount.classList.add('hidden');
+  bigPicturelikesCount.textContent = photosElement.likes;
   bigPictureCommentsСount.textContent = photosElement.comments.length;
 
+  var commentsString = '';
   for (var i = 0; i < photosElement.comments.length; i += 1) {
     var newCommentElement = createNewComment(photosElement.comments[i]);
-    bigPictureListComments.appendChild(newCommentElement);
+    /* commentsString = commentsString +
+    '<li class="social__comment social__comment--text"><img class="social__picture" src="img/avatar-' +
+      getRandomInt(1, 6) + '.svg" alt="Аватар комментатора фотографии 1" width="35" height="35"><p class="social__text">' + photosElement.comments[i] + '</p></li>'; */
+
+    fragment.appendChild(newCommentElement);
   }
+
+  bigPictureListComments.innerHTML = commentsString;
+
+  bigPictureListComments.appendChild(fragment);
 };
 
+// ф-ция скрытия блока
+var hideBlock = function (block) {
+  block.classList.add('visually-hidden');
+}
+
+// Вызываем функцию заполнения тестового массива с нужным количеством фото
+photos = fillPhotos(25);
+// Вызываем ф-цию добавления фотографий из массива в документ
+appendNewPhotos(photos);
+// Вызываем ф-цию увеличения фотографии
 displayBigPicture(photos[0]);
+// Скрытие блоков
+hideBlock(socialCommentCount);
+hideBlock(socialLoadmore);
