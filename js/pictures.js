@@ -1,13 +1,20 @@
 'use strict';
 
-var photos = [];
+var photos = []; // массив данных с фото
+var displayPhotos = []; // массив отрисованных фотографий picture__img для определения номера картинки
 var socialCommentCount = document.querySelector('.social__comment-count');
 var socialLoadmore = document.querySelector('.social__loadmore');
+var picturesContainer = document.querySelector('.pictures');
 
 // функция генерации случайного целого числа в заданном диапазоне
 // допустимо так объявлять функции, в контексте этого проекта?
 function getRandomInt(min, max) {
   return Math.round(Math.random() * (max - min)) + min;
+}
+
+// Скрывает или показывает окна загрузки и увеличенного просмотра
+function openCloseOverlay(currentOverlay) {
+  currentOverlay.classList.toggle('hidden');
 }
 
 // ф-ция создания объекта фотография
@@ -54,22 +61,41 @@ var generatePhoto = function (numPhoto) {
   }
   // Подбираем описание фото в зависимости от номера фото
   switch (numPhoto) {
-    case 10: case 11: case 14: case 20: case 23:
+    case 10:
+    case 11:
+    case 14:
+    case 20:
+    case 23:
       photo.description = 'Тестим новую камеру!';
       break;
-    case 1: case 2: case 3: case 4: case 9: case 21: case 22:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 9:
+    case 21:
+    case 22:
       photo.description = 'Затусили с друзьями на море';
       break;
-    case 5: case 7: case 8: case 13:
+    case 5:
+    case 7:
+    case 8:
+    case 13:
       photo.description = 'Как же круто тут кормят';
       break;
-    case 15: case 17: case 24:
+    case 15:
+    case 17:
+    case 24:
       photo.description = 'Отдыхаем...';
       break;
-    case 16: case 19:
+    case 16:
+    case 19:
       photo.description = 'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......';
       break;
-    case 6: case 12: case 18: case 25:
+    case 6:
+    case 12:
+    case 18:
+    case 25:
       photo.description = 'Вот это тачка!';
       break;
     default:
@@ -93,16 +119,17 @@ var fillPhotos = function (countPhotos) {
 // ф-ция вывода массива фото в документ
 var appendNewPhotos = function (addedPhotos) {
 
-  var picturesContainer = document.querySelector('.pictures');
   var contentPictureTemplate = document.querySelector('#picture').content;
   var pictureLinkTemplate = contentPictureTemplate.querySelector('.picture__link');
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < addedPhotos.length; i += 1) {
     var newPicture = pictureLinkTemplate.cloneNode(true);
+
     newPicture.querySelector('.picture__img').src = addedPhotos[i].url;
     newPicture.querySelector('.picture__stat--likes').textContent = addedPhotos[i].likes;
     newPicture.querySelector('.picture__stat--comments').textContent = addedPhotos[i].comments.length;
+    displayPhotos[i] = newPicture;
     fragment.appendChild(newPicture);
   }
 
@@ -130,9 +157,9 @@ var createNewComment = function (currentComment) {
 };
 
 // ф-ция показа увеличенного изображения
+var bigPicture = document.querySelector('.big-picture');
 var displayBigPicture = function (photosElement) {
 
-  var bigPicture = document.querySelector('.big-picture');
   var bigPictureImg = bigPicture.querySelector('.big-picture__img img');
   var bigPicturelikesCount = bigPicture.querySelector('.likes-count');
   var bigPictureCommentsСount = bigPicture.querySelector('.comments-count');
@@ -170,7 +197,88 @@ photos = fillPhotos(25);
 // Вызываем ф-цию добавления фотографий из массива в документ
 appendNewPhotos(photos);
 // Вызываем ф-цию увеличения фотографии
-displayBigPicture(photos[0]);
+// displayBigPicture(photos[0]);
 // Скрытие блоков
 hideBlock(socialCommentCount);
 hideBlock(socialLoadmore);
+
+// *********************** Module4 **************************************************************
+// *********************** Обработка клика по фото **********************************************
+var onPicturesClick = function (evt) {
+  var pictureLinkElement = evt.target;
+
+  var returnPictureLinkElement = function (currentElement) {
+
+    if ((pictureLinkElement.className !== 'picture__link') && (pictureLinkElement.className !== '')) {
+      pictureLinkElement = currentElement.parentElement;
+      pictureLinkElement = returnPictureLinkElement(pictureLinkElement);
+    }
+
+    return pictureLinkElement;
+
+  };
+
+  pictureLinkElement = returnPictureLinkElement(pictureLinkElement);
+
+  // позиция элемента в массиве displayPhotos соответствует его позиции в массиве данных photos
+  for (var i = 0; i < displayPhotos.length; i += 1) {
+    if (displayPhotos[i] === pictureLinkElement) {
+      displayBigPicture(photos[i]);
+      break;
+    }
+  }
+};
+
+
+picturesContainer.addEventListener('click', onPicturesClick);
+
+var bigPictureCansel = bigPicture.querySelector('.big-picture__cancel');
+bigPictureCansel.addEventListener('click', function () {
+  openCloseOverlay(bigPicture);
+});
+
+// *********************** Обработка загрузки новой фото ****************************************
+var imgUpload = document.querySelector('.img-upload');
+
+// *** Показать загружаемую фотографию ***
+var imgOverlay = imgUpload.querySelector('.img-upload__overlay');
+
+// Обработчик загрузки файла
+var onInputChange = function () {
+
+  openCloseOverlay(imgOverlay);
+
+};
+
+var uploadFile = imgUpload.querySelector('#upload-file');
+uploadFile.addEventListener('change', onInputChange);
+
+// Обработчик закрытия окна загрузки файла
+var onUploadCancelClick = function () {
+
+  openCloseOverlay(imgOverlay);
+  uploadFile.value = ''; // нужно сбрасывать значение поля выбора файла #upload-file иначе не будет срабатывать событие change, а у меня срабатывает и без сброса?...
+
+};
+
+var uploadCansel = imgUpload.querySelector('.img-upload__cancel');
+uploadCansel.addEventListener('click', onUploadCancelClick);
+
+// *** Применение фильтров ***
+
+// Обработчик наложения эффекта
+var onEffectChange = function (evt) {
+  var targetElem = evt.target;
+  var effectsPreview = targetElem.parentElement.querySelector('.effects__preview');
+  var selectedEffect = effectsPreview.classList[1];
+  var imgPreview = imgUpload.querySelector('.img-upload__preview img');
+  imgPreview.classList.remove(imgPreview.classList[0]);
+  imgPreview.classList.add(selectedEffect);
+};
+
+var effectsRadios = imgUpload.querySelectorAll('.effects__radio'); // массив переключателей
+
+// добавление обаработчиков смены эффектов
+for (var i = 0; i < effectsRadios.length; i += 1) {
+  effectsRadios[i].addEventListener('change', onEffectChange);
+}
