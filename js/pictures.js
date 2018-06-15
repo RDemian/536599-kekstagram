@@ -18,6 +18,10 @@ function openCloseOverlay(currentOverlay) {
 }
 
 // ф-ция создания объекта фотография
+var PHOTO_COMMENTS = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
+
+var PHOTO_DESCRIPTION = ['Тестим новую камеру!', 'Затусили с друзьями на море', 'Как же круто тут кормят', 'Отдыхаем...', 'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......', 'Вот это тачка!'];
+
 var generatePhoto = function (numPhoto) {
   var photo = {
     url: '',
@@ -35,72 +39,18 @@ var generatePhoto = function (numPhoto) {
   photo.likes = k;
 
   // Случайным образом заполняем комментарий к фото
-  var n = getRandomInt(1, 2);
+  var n = getRandomInt(1, 2); // комментарий состоит из одной или двух фраз
+  var currentComment = '';
   for (var j = 1; j <= n; j += 1) {
-    k = getRandomInt(1, 6);
-    switch (k) {
-      case 1:
-        photo.comments[j - 1] = 'Всё отлично!';
-        break;
-      case 2:
-        photo.comments[j - 1] = 'В целом всё неплохо. Но не всё.';
-        break;
-      case 3:
-        photo.comments[j - 1] = 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.';
-        break;
-      case 4:
-        photo.comments[j - 1] = 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.';
-        break;
-      case 5:
-        photo.comments[j - 1] = 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.';
-        break;
-      case 6:
-        photo.comments[j - 1] = 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!';
-        break;
-    }
+    k = getRandomInt(0, 5);
+    currentComment = currentComment + ' ' + PHOTO_COMMENTS[k];
   }
+  photo.comments[0] = currentComment;
+
   // Подбираем описание фото в зависимости от номера фото
-  switch (numPhoto) {
-    case 10:
-    case 11:
-    case 14:
-    case 20:
-    case 23:
-      photo.description = 'Тестим новую камеру!';
-      break;
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 9:
-    case 21:
-    case 22:
-      photo.description = 'Затусили с друзьями на море';
-      break;
-    case 5:
-    case 7:
-    case 8:
-    case 13:
-      photo.description = 'Как же круто тут кормят';
-      break;
-    case 15:
-    case 17:
-    case 24:
-      photo.description = 'Отдыхаем...';
-      break;
-    case 16:
-    case 19:
-      photo.description = 'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......';
-      break;
-    case 6:
-    case 12:
-    case 18:
-    case 25:
-      photo.description = 'Вот это тачка!';
-      break;
-    default:
-      photo.description = 'Не получилось:' + numPhoto;
-  }
+  k = getRandomInt(0, 5);
+
+  photo.description = PHOTO_DESCRIPTION[k];
 
   return photo;
 };
@@ -136,7 +86,7 @@ var appendNewPhotos = function (addedPhotos) {
   picturesContainer.appendChild(fragment);
 };
 
-// ф-ция формирования увеличенного изображения
+// ф-ция формирования блока комментариев
 var createNewComment = function (currentComment) {
   var newSocialComment = document.createElement('li');
   newSocialComment.classList.add('social__comment');
@@ -164,25 +114,23 @@ var displayBigPicture = function (photosElement) {
   var bigPicturelikesCount = bigPicture.querySelector('.likes-count');
   var bigPictureCommentsСount = bigPicture.querySelector('.comments-count');
   var bigPictureListComments = bigPicture.querySelector('.social__comments');
+  var bigPictureDescription = bigPicture.querySelector('.social__caption');
   var fragment = document.createDocumentFragment();
 
   bigPicture.classList.remove('hidden');
   bigPictureImg.src = photosElement.url;
-  // bigPicturelikesCount.classList.add('hidden');
+  bigPictureDescription.textContent = photosElement.description;
   bigPicturelikesCount.textContent = photosElement.likes;
   bigPictureCommentsСount.textContent = photosElement.comments.length;
 
-  var commentsString = '';
   for (var i = 0; i < photosElement.comments.length; i += 1) {
+
     var newCommentElement = createNewComment(photosElement.comments[i]);
-    /* commentsString = commentsString +
-    '<li class="social__comment social__comment--text"><img class="social__picture" src="img/avatar-' +
-      getRandomInt(1, 6) + '.svg" alt="Аватар комментатора фотографии 1" width="35" height="35"><p class="social__text">' + photosElement.comments[i] + '</p></li>'; */
 
     fragment.appendChild(newCommentElement);
   }
 
-  bigPictureListComments.innerHTML = commentsString;
+  bigPictureListComments.innerHTML = '';
 
   bigPictureListComments.appendChild(fragment);
 };
@@ -194,6 +142,7 @@ var hideBlock = function (block) {
 
 // Вызываем функцию заполнения тестового массива с нужным количеством фото
 photos = fillPhotos(25);
+
 // Вызываем ф-цию добавления фотографий из массива в документ
 appendNewPhotos(photos);
 // Вызываем ф-цию увеличения фотографии
