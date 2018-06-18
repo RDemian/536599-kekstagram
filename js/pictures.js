@@ -13,7 +13,8 @@ function getRandomInt(min, max) {
 }
 
 // Скрывает или показывает окна загрузки и увеличенного просмотра
-function openCloseOverlay(currentOverlay) {
+
+function addRemoveClassHidden(currentOverlay) {
   currentOverlay.classList.toggle('hidden');
 }
 
@@ -53,6 +54,7 @@ var generatePhoto = function (numPhoto) {
   photo.description = PHOTO_DESCRIPTION[k];
 
   return photo;
+
 };
 
 // ф-ция для заполнения тестового массива
@@ -86,7 +88,7 @@ var appendNewPhotos = function (addedPhotos) {
   picturesContainer.appendChild(fragment);
 };
 
-// ф-ция формирования блока комментариев
+// ф-ция формирования увеличенного изображения
 var createNewComment = function (currentComment) {
   var newSocialComment = document.createElement('li');
   newSocialComment.classList.add('social__comment');
@@ -114,23 +116,25 @@ var displayBigPicture = function (photosElement) {
   var bigPicturelikesCount = bigPicture.querySelector('.likes-count');
   var bigPictureCommentsСount = bigPicture.querySelector('.comments-count');
   var bigPictureListComments = bigPicture.querySelector('.social__comments');
-  var bigPictureDescription = bigPicture.querySelector('.social__caption');
   var fragment = document.createDocumentFragment();
 
   bigPicture.classList.remove('hidden');
   bigPictureImg.src = photosElement.url;
-  bigPictureDescription.textContent = photosElement.description;
+  // bigPicturelikesCount.classList.add('hidden');
   bigPicturelikesCount.textContent = photosElement.likes;
   bigPictureCommentsСount.textContent = photosElement.comments.length;
 
+  var commentsString = '';
   for (var i = 0; i < photosElement.comments.length; i += 1) {
-
     var newCommentElement = createNewComment(photosElement.comments[i]);
+    /* commentsString = commentsString +
+    '<li class="social__comment social__comment--text"><img class="social__picture" src="img/avatar-' +
+      getRandomInt(1, 6) + '.svg" alt="Аватар комментатора фотографии 1" width="35" height="35"><p class="social__text">' + photosElement.comments[i] + '</p></li>'; */
 
     fragment.appendChild(newCommentElement);
   }
 
-  bigPictureListComments.innerHTML = '';
+  bigPictureListComments.innerHTML = commentsString;
 
   bigPictureListComments.appendChild(fragment);
 };
@@ -142,7 +146,6 @@ var hideBlock = function (block) {
 
 // Вызываем функцию заполнения тестового массива с нужным количеством фото
 photos = fillPhotos(25);
-
 // Вызываем ф-цию добавления фотографий из массива в документ
 appendNewPhotos(photos);
 // Вызываем ф-цию увеличения фотографии
@@ -183,11 +186,12 @@ picturesContainer.addEventListener('click', onPicturesClick);
 
 var bigPictureCansel = bigPicture.querySelector('.big-picture__cancel');
 bigPictureCansel.addEventListener('click', function () {
-  openCloseOverlay(bigPicture);
+  addRemoveClassHidden(bigPicture);
 });
 
 // *********************** Обработка загрузки новой фото ****************************************
 var imgUpload = document.querySelector('.img-upload');
+var imgPreview = imgUpload.querySelector('.img-upload__preview img');
 
 // *** Показать загружаемую фотографию ***
 var imgOverlay = imgUpload.querySelector('.img-upload__overlay');
@@ -195,7 +199,8 @@ var imgOverlay = imgUpload.querySelector('.img-upload__overlay');
 // Обработчик загрузки файла
 var onInputChange = function () {
 
-  openCloseOverlay(imgOverlay);
+  imgPreview.style = 'transform: scale(1)';
+  addRemoveClassHidden(imgOverlay);
 
 };
 
@@ -205,7 +210,7 @@ uploadFile.addEventListener('change', onInputChange);
 // Обработчик закрытия окна загрузки файла
 var onUploadCancelClick = function () {
 
-  openCloseOverlay(imgOverlay);
+  addRemoveClassHidden(imgOverlay);
   uploadFile.value = ''; // нужно сбрасывать значение поля выбора файла #upload-file иначе не будет срабатывать событие change, а у меня срабатывает и без сброса?...
 
 };
@@ -215,12 +220,37 @@ uploadCansel.addEventListener('click', onUploadCancelClick);
 
 // *** Применение фильтров ***
 
+// Изменение масштаба + + + + + + + + + +
+
+var resizeControlMinus = imgUpload.querySelector('.resize__control--minus');
+var resizeControlPlus = imgUpload.querySelector('.resize__control--plus');
+var resizeControlValue = imgUpload.querySelector('.resize__control--value');
+
+var onResizeClick = function (evt) {
+  var scaleValue = resizeControlValue.value;
+  scaleValue = parseInt(scaleValue.slice(0, -1), 10); // обрезаем знак % в конце строки и преобразуем в число
+  if (evt.target === resizeControlMinus) {
+    scaleValue = scaleValue - 25;
+  }
+  if (evt.target === resizeControlPlus) {
+    scaleValue = scaleValue + 25;
+  }
+  scaleValue = (scaleValue < 25) ? 25 : scaleValue;
+  scaleValue = (scaleValue > 100) ? 100 : scaleValue;
+  imgPreview.style = 'transform: scale(' + scaleValue / 100 + ')';
+  resizeControlValue.value = String(scaleValue) + '%';
+};
+
+resizeControlMinus.addEventListener('click', onResizeClick);
+
+resizeControlPlus.addEventListener('click', onResizeClick);
+
 // Обработчик наложения эффекта
 var onEffectChange = function (evt) {
   var targetElem = evt.target;
   var effectsPreview = targetElem.parentElement.querySelector('.effects__preview');
   var selectedEffect = effectsPreview.classList[1];
-  var imgPreview = imgUpload.querySelector('.img-upload__preview img');
+
   imgPreview.classList.remove(imgPreview.classList[0]);
   imgPreview.classList.add(selectedEffect);
 };
@@ -231,3 +261,5 @@ var effectsRadios = imgUpload.querySelectorAll('.effects__radio'); // масси
 for (var i = 0; i < effectsRadios.length; i += 1) {
   effectsRadios[i].addEventListener('change', onEffectChange);
 }
+
+// **************************** module4-task2 ***************************************
