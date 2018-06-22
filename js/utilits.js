@@ -32,11 +32,14 @@
       }
     },
 
-    // position: Number
+    // установка позиции пина на слайдере position: Number
     setScaleLevel: function () {
+
       var position = scaleValue.value * scaleLine.offsetWidth / 100;
+
       scalePin.style.left = (position) + 'px';
       scaleLevel.style.width = (position) + 'px';
+
     },
 
     onScaleDown: function (evt, action) {
