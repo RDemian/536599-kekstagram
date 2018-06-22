@@ -31,6 +31,10 @@
         textValidity = textValidity + 'Максимальная длина хэш-тега не более 20 символов.' + ' ';
       }
 
+      if (hashtags[i].indexOf('#', 1) > -1) {
+        textValidity = textValidity + 'Теги должны быть разделены пробелами.' + ' ';
+      }
+
     }
 
     if (hashtags.length > 5) {
