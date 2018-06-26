@@ -24,7 +24,18 @@
     picturesContainer.appendChild(fragment);
   }
 
+  var templatePictureContent = document.querySelector('#picture').content;
+  var messageError = templatePictureContent.querySelector('.img-upload__message--error');
+  var newMessageError = messageError.cloneNode(true);
+
+  function onError(message) {
+    newMessageError.classList.remove('hidden');
+    newMessageError.textContent = message;
+    picturesContainer.appendChild(newMessageError);
+  }
+
   // Вызываем ф-цию добавления фотографий из массива в документ
-  appendPhotos(window.photos);
+
+  window.backend.load(appendPhotos, onError);
 
 })();

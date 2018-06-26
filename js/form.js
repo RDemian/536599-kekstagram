@@ -13,8 +13,43 @@
   var resizeControlValue = imgUpload.querySelector('.resize__control--value');
   var effectsRadios = imgUpload.querySelectorAll('.effects__radio'); // массив input-переключателей эффектов
 
+  // Обработчик загрузки файла
   uploadFile.addEventListener('change', onUpLoadChange);
 
+  function onUpLoadChange(evtUpLoad) {
+
+    evtUpLoad.stopPropagation();
+
+    openPopup();
+
+  }
+
+  var uploadCansel = imgUpload.querySelector('.img-upload__cancel');
+  function openPopup() {
+
+    window.utilits.addRemoveClassHidden(imgOverlay);
+    imgPreview.style = 'transform: scale(1)'; // мастаб фото 100%
+    imgPreview.style.filter = '';
+    imgPreview.classList.remove(imgPreview.classList[1]);
+    scale.style.display = 'none';
+    // Обработчик закрытия окна загрузки файла
+    document.addEventListener('keydown', onUploadEscPress);
+
+    uploadCansel.addEventListener('click', onUploadCancelClick);
+    uploadCansel.addEventListener('keydown', onUploadEnterPres);
+
+    // Обработчики изменения мастштаба фото
+    resizeControlMinus.addEventListener('click', onResizeClick);
+    resizeControlPlus.addEventListener('click', onResizeClick);
+
+    // добавление обаработчиков смены эффектов
+
+    for (var i = 0; i < effectsRadios.length; i += 1) {
+      effectsRadios[i].addEventListener('change', onEffectChange);
+    }
+  }
+
+  // Закрыть превью фото
   function onUploadEscPress(evt) {
     // если курсор в поле, popUp не закрываем
     if ((document.activeElement.tagName === 'INPUT') || (document.activeElement.tagName === 'TEXTAREA')) {
@@ -27,6 +62,14 @@
 
   function onUploadEnterPres(evt) {
     window.utilits.isEnterEvent(evt, closePopup);
+  }
+
+  function onUploadCancelClick(evt) {
+
+    evt.stopPropagation();
+
+    closePopup();
+
   }
 
   function closePopup() {
@@ -46,54 +89,16 @@
     for (var i = 0; i < effectsRadios.length; i += 1) {
       effectsRadios[i].removeEventListener('change', onEffectChange);
     }
-  }
 
-  function openPopup() {
-
-    window.utilits.addRemoveClassHidden(imgOverlay);
-    imgPreview.style = 'transform: scale(1)'; // мастаб фото 100%
-    imgPreview.style.filter = '';
-    imgPreview.classList.remove(imgPreview.classList[1]);
-    scale.style.display = 'none';
-    // Обработчик закрытия окна загрузки файла
-    uploadCansel.addEventListener('click', onUploadCancelClick);
-    uploadCansel.addEventListener('keydown', onUploadEnterPres);
-    document.addEventListener('keydown', onUploadEscPress);
-
-    // Обработчики изменения мастштаба фото
-    resizeControlMinus.addEventListener('click', onResizeClick);
-    resizeControlPlus.addEventListener('click', onResizeClick);
-
-    // добавление обаработчиков смены эффектов
-
-    for (var i = 0; i < effectsRadios.length; i += 1) {
-      effectsRadios[i].addEventListener('change', onEffectChange);
-    }
-  }
-
-  // Обработчик загрузки файла
-  function onUpLoadChange(evtUpLoad) {
-
-    evtUpLoad.stopPropagation();
-
-    openPopup();
-
-  }
-
-  var uploadCansel = imgUpload.querySelector('.img-upload__cancel');
-
-  // Закрыть превью фото
-  function onUploadCancelClick(evt) {
-
-    evt.stopPropagation();
-
-    closePopup();
+    imgPreview.removeChild(newMessageError);
+    errorLinkAgain.removeEventListener('click', onAgainClick);
+    errorLinkAnother.removeEventListener('click', onAnotherClick);
 
   }
 
   // *** Применение фильтров ***
-  // Изменение масштаба
 
+  // Изменение масштаба
   function onResizeClick(evt) {
 
     var scaleValue = resizeControlValue.value;
@@ -144,13 +149,12 @@
 
   }
 
-  // Обработчик перетаскивания, изменения эффекта
+  // Обработчик изменения эффекта, перетаскивания
+  scalePin.addEventListener('mousedown', onMouseDown);
 
   function onMouseDown(evt) {
     window.utilits.onScaleDown(evt, changeEffectValue);
   }
-
-  scalePin.addEventListener('mousedown', onMouseDown);
 
   function changeEffectValue() {
     var persent = parseInt(scaleValue.value, 10) / 100;
@@ -190,6 +194,48 @@
     effectType = effectType + '(' + effectValue + effectMeasure + ')';
 
     imgPreview.style.filter = effectType;
+  }
+
+  // отправка фото на сервер
+  var imgUploadForm = imgUpload.querySelector('.img-upload__form');
+  var templatePictureContent = document.querySelector('#picture').content;
+  var messageError = templatePictureContent.querySelector('.img-upload__message--error');
+  var newMessageError = messageError.cloneNode(true);
+  var errorLinkAgain = newMessageError.querySelector('.error__link--again');
+  var errorLinkAnother = newMessageError.querySelector('.error__link--another');
+
+  imgUploadForm.addEventListener('submit', onImgSubmit);
+
+  function onImgSubmit(evt) {
+    window.backend.upLoad(new FormData(imgUploadForm), onLoad, onError);
+    evt.preventDefault();
+  }
+
+  function onLoad() {
+    // закрываем форму после отправки изображения на сервер
+    imgOverlay.classList.add('hidden');
+  }
+
+  function onError(message) {
+    var errorLinks = newMessageError.querySelector('.error__links');
+    newMessageError.classList.remove('hidden');
+    newMessageError.textContent = message;
+    newMessageError.appendChild(errorLinks);
+    imgPreview.appendChild(newMessageError);
+    errorLinkAgain.addEventListener('click', onAgainClick);
+    errorLinkAnother.addEventListener('click', onAnotherClick);
+  }
+
+  function onAgainClick() {
+
+    newMessageError.classList.add('hidden');
+
+  }
+
+  function onAnotherClick() {
+
+    closePopup();
+
   }
 
 })();
