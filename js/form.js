@@ -52,7 +52,9 @@
 
     window.utilits.addRemoveClassHidden(imgOverlay);
     imgPreview.style = 'transform: scale(1)'; // мастаб фото 100%
-
+    imgPreview.style.filter = '';
+    imgPreview.classList.remove(imgPreview.classList[1]);
+    scale.style.display = 'none';
     // Обработчик закрытия окна загрузки файла
     uploadCansel.addEventListener('click', onUploadCancelClick);
     uploadCansel.addEventListener('keydown', onUploadEnterPres);
@@ -63,6 +65,7 @@
     resizeControlPlus.addEventListener('click', onResizeClick);
 
     // добавление обаработчиков смены эффектов
+
     for (var i = 0; i < effectsRadios.length; i += 1) {
       effectsRadios[i].addEventListener('change', onEffectChange);
     }
@@ -114,8 +117,6 @@
   // Обработчик наложения эффекта
   var scale = imgUpload.querySelector('.img-upload__scale');
   var scalePin = scale.querySelector('.scale__pin');
-  // var scaleLine = scale.querySelector('.scale__line');
-  // var scaleLevel = scale.querySelector('.scale__level');
   var scaleValue = scale.querySelector('.scale__value');
 
   function onEffectChange(evt) {
