@@ -82,7 +82,7 @@
     // позиция элемента в массиве displayPhotos соответствует его позиции в массиве данных photos
     for (var i = 0; i < pictureLinks.length; i += 1) {
       if (pictureLinks[i] === pictureLinkElement) {
-        displayBigPicture(window.photos[i]);
+        displayBigPicture(window.currentPhotosArray[i]);
         break;
       }
     }
