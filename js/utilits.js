@@ -10,83 +10,90 @@
   var scaleLevel = scale.querySelector('.scale__level');
   var scaleValue = scale.querySelector('.scale__value');
 
-  window.utilits = {
-    // функция генерации случайного целого числа в заданном диапазоне включительно
-    addRemoveClassHidden: function (currentObject) {
-      currentObject.classList.toggle('hidden');
-    },
 
-    getRandomInt: function (min, max) {
-      return Math.round(Math.random() * (max - min)) + min;
-    },
+  // функция генерации случайного целого числа в заданном диапазоне включительно
+  function addRemoveClassHidden(currentObject) {
+    currentObject.classList.toggle('hidden');
+  }
 
-    isEscEvent: function (evt, action) {
-      if (evt.keyCode === ESC_KEYCODE) {
-        action();
-      }
-    },
+  function getRandomInt(min, max) {
+    return Math.round(Math.random() * (max - min)) + min;
+  }
 
-    isEnterEvent: function (evt, action) {
-      if (evt.keyCode === ENTER_KEYCODE) {
-        action();
-      }
-    },
+  function isEscEvent(evt, action) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      action();
+    }
+  }
 
-    // установка позиции пина на слайдере position: Number
-    setScaleLevel: function () {
+  function isEnterEvent(evt, action) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      action();
+    }
+  }
 
-      var position = scaleValue.value * scaleLine.offsetWidth / 100;
+  // установка позиции пина на слайдере position: Number
+  function setScaleLevel() {
 
-      scalePin.style.left = (position) + 'px';
-      scaleLevel.style.width = (position) + 'px';
+    var position = scaleValue.value * scaleLine.offsetWidth / 100;
 
-    },
+    scalePin.style.left = (position) + 'px';
+    scaleLevel.style.width = (position) + 'px';
 
-    onScaleDown: function (evt, action) {
+  }
 
-      evt.preventDefault();
-      var startX = evt.clientX;
-      var shiftX = 0;
+  function onScaleDown(evt, action) {
 
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
+    evt.preventDefault();
+    var startX = evt.clientX;
+    var shiftX = 0;
 
-      var scaleWidth = scaleLine.offsetWidth;
-      var newValue;
-      var moved = false;
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
 
-      function onMouseMove(moveEvt) {
+    var scaleWidth = scaleLine.offsetWidth;
+    var newValue;
+    var moved = false;
 
-        moveEvt.preventDefault();
-        moved = true;
+    function onMouseMove(moveEvt) {
 
-        shiftX = startX - moveEvt.clientX;
-        startX = moveEvt.clientX;
+      moveEvt.preventDefault();
+      moved = true;
 
-        newValue = scalePin.offsetLeft - shiftX;
-        newValue = (newValue < 0) ? 0 : newValue;
-        newValue = (newValue > scaleWidth) ? scaleWidth : newValue;
-        newValue = Math.round(100 / scaleWidth * newValue);
-        scaleValue.value = newValue;
+      shiftX = startX - moveEvt.clientX;
+      startX = moveEvt.clientX;
 
-        window.utilits.setScaleLevel();
+      newValue = scalePin.offsetLeft - shiftX;
+      newValue = (newValue < 0) ? 0 : newValue;
+      newValue = (newValue > scaleWidth) ? scaleWidth : newValue;
+      newValue = Math.round(100 / scaleWidth * newValue);
+      scaleValue.value = newValue;
 
-      }
+      window.utilits.setScaleLevel();
 
-      function onMouseUp(upEvt) {
-
-        upEvt.preventDefault();
-
-        if (moved) {
-          action();
-        }
-
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
-
-      }
     }
 
+    function onMouseUp(upEvt) {
+
+      upEvt.preventDefault();
+
+      if (moved) {
+        action();
+      }
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+
+    }
+  }
+
+  window.utilits = {
+    addRemoveClassHidden: addRemoveClassHidden,
+    getRandomInt: getRandomInt,
+    isEscEvent: isEscEvent,
+    isEnterEvent: isEnterEvent,
+    setScaleLevel: setScaleLevel,
+    onScaleDown: onScaleDown
   };
 
 })();
