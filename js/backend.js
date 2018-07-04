@@ -2,6 +2,8 @@
 
 (function () {
 
+  var STATUS_SUCCESS = 200;
+
   function load(onLoad, onError) {
 
     var URL = 'https://js.dump.academy/kekstagram/data';
@@ -11,7 +13,7 @@
 
     xhr.addEventListener('load', function () {
 
-      if (xhr.status === 200) {
+      if (xhr.status === STATUS_SUCCESS) {
         onLoad(xhr.response);
       } else {
         onError('Cтатус ответа: ' + xhr.status + ' ' + xhr.statusText);
@@ -37,7 +39,7 @@
     var xhr = new XMLHttpRequest();
     xhr.addEventListener('load', function () {
 
-      if (xhr.status === 200) {
+      if (xhr.status === STATUS_SUCCESS) {
         onLoad(xhr.response);
       } else {
         onError('Cтатус ответа: ' + xhr.status + ' ' + xhr.statusText);

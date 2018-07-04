@@ -4,31 +4,99 @@
 
   // ф-ция показа увеличенного изображения
   var bigPicture = document.querySelector('.big-picture');
+  var SIZE_COMMENTS_FRAGMENT = 5;
+  // *********************** Обработка клика по фото **********************************************
+  var picturesContainer = document.querySelector('.pictures');
+  var currentElement; // текущий элемент в массиве отображаемых фото window.displayPhotos.currentPhotosArray
+  picturesContainer.addEventListener('click', onPictureClick);
+
+  function onPictureClick(evt) {
+    var pictureLinkElement = evt.target;
+    // находим конкретный элемент по которому кликнули, обработчик на контейнере
+    pictureLinkElement = returnPictureLinkElement(pictureLinkElement);
+
+    // находим элемент в массиве фотографий
+    var pictureLinks = picturesContainer.querySelectorAll('.picture__link');
+    for (var i = 0; i < pictureLinks.length; i += 1) {
+      if (pictureLinks[i] === pictureLinkElement) {
+        currentElement = window.displayPhotos.currentPhotosArray[i];
+        displayBigPicture(currentElement);
+        break;
+      }
+    }
+  }
+
+  // возвращает ссылку на элемент с фотографией по которой кликнули
+  function returnPictureLinkElement(clickElement) {
+
+    if ((clickElement.className !== 'picture__link') && (clickElement.className !== '')) {
+      clickElement = clickElement.parentElement;
+      clickElement = returnPictureLinkElement(clickElement);
+    }
+
+    return clickElement;
+
+  }
 
   function displayBigPicture(photosElement) {
 
     var bigPictureImg = bigPicture.querySelector('.big-picture__img img');
     var bigPictureSocialCaption = bigPicture.querySelector('.social__caption');
     var bigPicturelikesCount = bigPicture.querySelector('.likes-count');
-    var bigPictureCommentsСount = bigPicture.querySelector('.comments-count');
-    var bigPictureListComments = bigPicture.querySelector('.social__comments');
-    var fragment = document.createDocumentFragment();
+    // var bigPictureCommentsСount = bigPicture.querySelector('.comments-count');
+
+    // var bigPictureListComments = bigPicture.querySelector('.social__comments');
 
     window.utilits.addRemoveClassHidden(bigPicture);
     // bigPicture.classList.remove('hidden');
     bigPictureImg.src = photosElement.url;
     bigPictureSocialCaption.textContent = photosElement.description;
     bigPicturelikesCount.textContent = photosElement.likes;
-    bigPictureCommentsСount.textContent = photosElement.comments.length;
+    // bigPictureCommentsСount.textContent = commentCount;
 
-    for (var i = 0; i < photosElement.comments.length; i += 1) {
-      var newCommentElement = createNewComment(photosElement.comments[i]);
+    createNextCommentsFragment(SIZE_COMMENTS_FRAGMENT, true);
+
+  }
+
+  // отображение комментариев
+  var socialLoadmoreBtn = bigPicture.querySelector('.social__loadmore');
+  socialLoadmoreBtn.addEventListener('click', onLoadmoreClick);
+
+  function onLoadmoreClick() {
+
+    createNextCommentsFragment(SIZE_COMMENTS_FRAGMENT, false);
+
+  }
+
+  // добавляет указанное количество комментариев в блок
+  // sizeFragment - (int) количество добавляемых комментариев
+  // clearCommentsList - (boolean) удалить текущие комментарии
+  function createNextCommentsFragment(sizeFragment, clearCommentsList) {
+
+    var bigPictureListComments = bigPicture.querySelector('.social__comments');
+
+    if (clearCommentsList) {
+      bigPictureListComments.innerHTML = '';
+    }
+
+    var fragment = document.createDocumentFragment();
+    var countDisplaedComment = bigPictureListComments.querySelectorAll('.social__comment').length;
+
+    for (var i = countDisplaedComment; i < currentElement.comments.length; i += 1) {
+      if (i === (sizeFragment + countDisplaedComment)) {
+        break;
+      }
+      var newCommentElement = createNewComment(currentElement.comments[i]);
       fragment.appendChild(newCommentElement);
     }
 
-    bigPictureListComments.innerHTML = '';
-
     bigPictureListComments.appendChild(fragment);
+
+    var socialCommentCount = bigPicture.querySelector('.social__comment-count');
+    var commentCount = currentElement.comments.length;
+    countDisplaedComment = bigPictureListComments.querySelectorAll('.social__comment').length;
+    socialCommentCount.innerHTML = '' + countDisplaedComment + ' из <span class="comments-count">' + commentCount + '</span> комментариев';
+
   }
 
   // ф-ция отображения нового комментария
@@ -57,54 +125,13 @@
     return newSocialComment;
   }
 
-  // *********************** Обработка клика по фото **********************************************
-  var picturesContainer = document.querySelector('.pictures');
-
-  function onPictureClick(evt) {
-    var pictureLinkElement = evt.target;
-
-    // возвращает ссылку на элемент с фотографией по которой кликнули
-    function returnPictureLinkElement(currentElement) {
-
-      if ((pictureLinkElement.className !== 'picture__link') && (pictureLinkElement.className !== '')) {
-        pictureLinkElement = currentElement.parentElement;
-        pictureLinkElement = returnPictureLinkElement(pictureLinkElement);
-      }
-
-      return pictureLinkElement;
-
-    }
-
-    pictureLinkElement = returnPictureLinkElement(pictureLinkElement);
-
-    var pictureLinks = picturesContainer.querySelectorAll('.picture__link');
-
-    // позиция элемента в массиве displayPhotos соответствует его позиции в массиве данных photos
-    for (var i = 0; i < pictureLinks.length; i += 1) {
-      if (pictureLinks[i] === pictureLinkElement) {
-        displayBigPicture(window.currentPhotosArray[i]);
-        break;
-      }
-    }
-  }
-
-  picturesContainer.addEventListener('click', onPictureClick);
-
   var bigPictureCansel = bigPicture.querySelector('.big-picture__cancel');
   bigPictureCansel.addEventListener('click', function () {
     window.utilits.addRemoveClassHidden(bigPicture);
   });
 
-  // ф-ция скрытия блока
-  var hideBlock = function (block) {
-    block.classList.add('visually-hidden');
-  };
 
-  // Скрытие блоков
-  var socialCommentCount = document.querySelector('.social__comment-count');
   var socialLoadmore = document.querySelector('.social__loadmore');
 
-  hideBlock(socialCommentCount);
-  hideBlock(socialLoadmore);
 
 })();
