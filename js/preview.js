@@ -130,8 +130,4 @@
     window.utilits.addRemoveClassHidden(bigPicture);
   });
 
-
-  var socialLoadmore = document.querySelector('.social__loadmore');
-
-
 })();
