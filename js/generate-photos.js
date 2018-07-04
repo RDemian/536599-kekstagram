@@ -20,7 +20,7 @@
     // заполняем адрес фото в зависимости от номера
     photo.url = 'photos/' + numPhoto + '.jpg';
 
-    // Случайным образом устанавливаем количество лайков
+    // Случайным образом устанавливаем количество лайков от 15 до 200
     k = window.utilits.getRandomInt(15, 200);
     photo.likes = k;
 
@@ -54,6 +54,7 @@
   };
 
   // Вызываем функцию заполнения тестового массива с нужным количеством фото
-  window.photos = fillPhotos(25);
+  var countPhotos = 25;
+  window.photos = fillPhotos(countPhotos);
 
 })();

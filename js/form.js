@@ -102,18 +102,21 @@
   function onResizeClick(evt) {
 
     var scaleValue = resizeControlValue.value;
+    var SCALE_STEP = 25;
+    var MIN_SCALE = 25;
+    var MAX_SCALE = 100;
 
     evt.stopPropagation();
 
     scaleValue = parseInt(scaleValue.slice(0, -1), 10); // обрезаем знак % в конце строки и преобразуем в число
     if (evt.target === resizeControlMinus) {
-      scaleValue = scaleValue - 25;
+      scaleValue = scaleValue - SCALE_STEP;
     }
     if (evt.target === resizeControlPlus) {
-      scaleValue = scaleValue + 25;
+      scaleValue = scaleValue + SCALE_STEP;
     }
-    scaleValue = (scaleValue < 25) ? 25 : scaleValue;
-    scaleValue = (scaleValue > 100) ? 100 : scaleValue;
+    scaleValue = (scaleValue < MIN_SCALE) ? MIN_SCALE : scaleValue;
+    scaleValue = (scaleValue > MAX_SCALE) ? MAX_SCALE : scaleValue;
     imgPreview.style = 'transform: scale(' + scaleValue / 100 + ')';
     resizeControlValue.value = String(scaleValue) + '%';
 
@@ -157,7 +160,7 @@
   }
 
   function changeEffectValue() {
-    var persent = parseInt(scaleValue.value, 10) / 100;
+    var persent = parseInt(scaleValue.value, 10) / 100; // проценты в число
     var selectedEffect = imgPreview.classList[1];
     var minValue = 0;
     var maxValue = 1;
@@ -190,7 +193,7 @@
     }
 
     effectValue = (minValue + (persent * maxValue));
-    effectValue = Math.round(effectValue * 100) / 100;
+    effectValue = Math.round(effectValue * 100) / 100; // округляем до сотых
     effectType = effectType + '(' + effectValue + effectMeasure + ')';
 
     imgPreview.style.filter = effectType;

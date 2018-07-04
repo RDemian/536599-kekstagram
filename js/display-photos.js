@@ -4,6 +4,12 @@
 
   var picturesContainer = document.querySelector('.pictures');
 
+  window.displayPhotos = {
+    loadPhotosArray: [],
+    currentPhotosArray: [],
+    appendPhotos: appendPhotos
+  };
+
   // ф-ция вывода массива фото в документ
   function appendPhotos(addedPhotos) {
 
@@ -18,10 +24,12 @@
       newPicture.querySelector('.picture__stat--likes').textContent = addedPhotos[i].likes;
       newPicture.querySelector('.picture__stat--comments').textContent = addedPhotos[i].comments.length;
 
+      window.displayPhotos.currentPhotosArray[i] = addedPhotos[i];
       fragment.appendChild(newPicture);
     }
 
     picturesContainer.appendChild(fragment);
+
   }
 
   var templatePictureContent = document.querySelector('#picture').content;
@@ -35,7 +43,11 @@
   }
 
   // Вызываем ф-цию добавления фотографий из массива в документ
+  function onLoadPhotos(loadPhotos) {
+    window.displayPhotos.loadPhotosArray = loadPhotos;
+    window.displayPhotos.appendPhotos(loadPhotos);
+  }
 
-  window.backend.load(appendPhotos, onError);
+  window.backend.load(onLoadPhotos, onError);
 
 })();

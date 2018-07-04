@@ -10,12 +10,20 @@
   var scaleLevel = scale.querySelector('.scale__level');
   var scaleValue = scale.querySelector('.scale__value');
 
+  window.utilits = {
+    addRemoveClassHidden: addRemoveClassHidden,
+    getRandomInt: getRandomInt,
+    isEscEvent: isEscEvent,
+    isEnterEvent: isEnterEvent,
+    setScaleLevel: setScaleLevel,
+    onScaleDown: onScaleDown
+  };
 
-  // функция генерации случайного целого числа в заданном диапазоне включительно
   function addRemoveClassHidden(currentObject) {
     currentObject.classList.toggle('hidden');
   }
 
+  // функция генерации случайного целого числа в заданном диапазоне включительно
   function getRandomInt(min, max) {
     return Math.round(Math.random() * (max - min)) + min;
   }
@@ -42,6 +50,7 @@
 
   }
 
+  // нажатие пина на слайдере
   function onScaleDown(evt, action) {
 
     evt.preventDefault();
@@ -86,14 +95,5 @@
 
     }
   }
-
-  window.utilits = {
-    addRemoveClassHidden: addRemoveClassHidden,
-    getRandomInt: getRandomInt,
-    isEscEvent: isEscEvent,
-    isEnterEvent: isEnterEvent,
-    setScaleLevel: setScaleLevel,
-    onScaleDown: onScaleDown
-  };
 
 })();

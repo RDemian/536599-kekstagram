@@ -8,6 +8,7 @@
 
   // проверка введенного хэш-тега и изменение сообщения об ошибке
   function onHashtagChange(evt) {
+    var MAX_COUNT_HASHTAG = 5;
 
     var hashString = evt.target.value;
 
@@ -37,8 +38,8 @@
 
     }
 
-    if (hashtags.length > 5) {
-      textValidity = textValidity + 'Количество хэш-тегов не более 5.';
+    if (hashtags.length > MAX_COUNT_HASHTAG) {
+      textValidity = textValidity + 'Количество хэш-тегов не более ' + MAX_COUNT_HASHTAG;
     }
 
     if (hasDuplicates(hashtags)) {
