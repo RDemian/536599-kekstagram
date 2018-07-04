@@ -13,7 +13,7 @@
   function onPictureClick(evt) {
     var pictureLink = evt.target;
     // находим конкретный элемент по которому кликнули, обработчик на контейнере
-    pictureLink = returnpictureLink(pictureLink);
+    pictureLink = returnPictureLink(pictureLink);
 
     // находим элемент в массиве фотографий
     var pictureLinks = picturesContainer.querySelectorAll('.picture__link');
@@ -27,11 +27,11 @@
   }
 
   // возвращает ссылку на элемент с фотографией по которой кликнули
-  function returnpictureLink(clickElement) {
+  function returnPictureLink(clickElement) {
 
     if ((clickElement.className !== 'picture__link') && (clickElement.className !== '')) {
       clickElement = clickElement.parentElement;
-      clickElement = returnpictureLink(clickElement);
+      clickElement = returnPictureLink(clickElement);
     }
 
     return clickElement;
