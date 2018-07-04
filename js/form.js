@@ -52,7 +52,7 @@
   // Закрыть превью фото
   function onUploadEscPress(evt) {
     // если курсор в поле, popUp не закрываем
-    if ((document.activeElement.tagName === 'INPUT') || (document.activeElement.tagName === 'TEXTAREA')) {
+    if ((document.activeElement.name === 'hashtags') || (document.activeElement.name === 'description')) {
       return;
     }
 
@@ -90,7 +90,9 @@
       effectsRadios[i].removeEventListener('change', onEffectChange);
     }
 
-    imgPreview.removeChild(newMessageError);
+    if (imgPreview.contains(newMessageError)) {
+      imgPreview.removeChild(newMessageError);
+    }
     errorLinkAgain.removeEventListener('click', onAgainClick);
     errorLinkAnother.removeEventListener('click', onAnotherClick);
 

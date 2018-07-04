@@ -28,9 +28,10 @@
     var picturesContainer = document.querySelector('.pictures');
     var pictureLinks = picturesContainer.querySelectorAll('.picture__link');
     // очистка контейнера фотографий
-    for (var i = 0; i < pictureLinks.length; i += 1) {
-      picturesContainer.removeChild(pictureLinks[i]);
-    }
+    pictureLinks.forEach(function (item) {
+      picturesContainer.removeChild(item);
+    });
+
 
     var filterMap = {
       'filter-popular': filterPopular,
@@ -48,12 +49,13 @@
 
   function filterNew() {
 
+    var COUNT_NEW_PHOTO = 10;
     var indexElem = window.utilits.getRandomInt(1, window.displayPhotos.loadPhotosArray.length);
 
     var sortPhotos = window.displayPhotos.loadPhotosArray.slice(indexElem, window.displayPhotos.loadPhotosArray.length);
     sortPhotos = sortPhotos.concat(window.displayPhotos.loadPhotosArray.slice(0, indexElem));
 
-    var COUNT_NEW_PHOTO = 10;
+
     sortPhotos = sortPhotos.slice(0, COUNT_NEW_PHOTO);
 
     window.displayPhotos.appendPhotos(sortPhotos);
