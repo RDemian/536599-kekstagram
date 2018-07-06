@@ -62,18 +62,22 @@
 
     createNextCommentsFragment(SIZE_COMMENTS_FRAGMENT, true);
 
-    bigPictureCancel.addEventListener('click', onHideBigPicture);
+    bigPictureCancel.addEventListener('click', onCancelClick);
     document.addEventListener('keydown', onEscPress);
 
   }
 
-  function onEscPress(evt) {
-    window.utilits.isEscEvent(evt, onHideBigPicture);
+  function onCancelClick() {
+    hideBigPicture();
   }
 
-  function onHideBigPicture() {
+  function onEscPress(evt) {
+    window.utilits.isEscEvent(evt, hideBigPicture);
+  }
+
+  function hideBigPicture() {
     window.utilits.addRemoveClassHidden(bigPicture);
-    bigPictureCancel.removeEventListener('click', onHideBigPicture);
+    bigPictureCancel.removeEventListener('click', onCancelClick);
     socialLoadmoreBtn.removeEventListener('click', onLoadmoreClick);
     document.removeEventListener('keydown', onEscPress);
   }
