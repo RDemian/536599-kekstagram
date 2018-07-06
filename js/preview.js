@@ -110,7 +110,6 @@
 
     if ((countDisplaedComment + sizeFragment) >= currentElement.comments.length) {
       socialLoadmoreBtn.classList.add('hidden');
-      console.log(socialLoadmoreBtn.classList);
     }
 
     bigPictureListComments.appendChild(fragment);

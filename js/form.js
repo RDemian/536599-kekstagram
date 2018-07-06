@@ -3,7 +3,6 @@
 (function () {
 
   var imgUpload = document.querySelector('.img-upload');
-  var imgUploadInput = imgUpload.querySelector('.img-upload__input');
   var imgOverlay = imgUpload.querySelector('.img-upload__overlay');
   var imgPreview = imgUpload.querySelector('.img-upload__preview');
 
@@ -20,8 +19,7 @@
   function onUpLoadChange(evtUpLoad) {
 
     evtUpLoad.stopPropagation();
-    console.log(evtUpLoad);
-    console.log(imgUploadInput);
+
     openPopup();
 
   }
@@ -224,7 +222,7 @@
 
   function onLoad() {
     // закрываем форму после отправки изображения на сервер
-    imgOverlay.classList.add('hidden');
+    closePopup();
   }
 
   function onError(message) {
