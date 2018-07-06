@@ -20,20 +20,31 @@
 
     var textValidity = '';
 
+
     for (var i = 0; i < hashtags.length; i += 1) {
 
       textValidity = '';
 
-      if (hashtags[i].slice(0, 1) !== '#') {
+      var currentHashtag = hashtags[i];
+
+      if (currentHashtag.slice(0, 1) !== '#') {
         textValidity = textValidity + 'Теги должны начинаться с символа \'#\'.' + ' ';
       }
 
-      if (hashtags[i].length > 20) {
+      if (currentHashtag.length < 2) {
+        textValidity = textValidity + 'Хеш-тег не может состоять только из одной решётки.' + ' ';
+      }
+
+      if (currentHashtag.length > 20) {
         textValidity = textValidity + 'Максимальная длина хэш-тега не более 20 символов.' + ' ';
       }
 
-      if (hashtags[i].indexOf('#', 1) > -1) {
+      if (currentHashtag.indexOf('#', 1) > -1) {
         textValidity = textValidity + 'Теги должны быть разделены пробелами.' + ' ';
+      }
+
+      if (textValidity !== '') {
+        break;
       }
 
     }

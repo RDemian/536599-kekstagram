@@ -3,6 +3,7 @@
 (function () {
 
   var imgUpload = document.querySelector('.img-upload');
+  var imgUploadInput = imgUpload.querySelector('.img-upload__input');
   var imgOverlay = imgUpload.querySelector('.img-upload__overlay');
   var imgPreview = imgUpload.querySelector('.img-upload__preview');
 
@@ -19,7 +20,8 @@
   function onUpLoadChange(evtUpLoad) {
 
     evtUpLoad.stopPropagation();
-
+    console.log(evtUpLoad);
+    console.log(imgUploadInput);
     openPopup();
 
   }
@@ -47,6 +49,10 @@
     for (var i = 0; i < effectsRadios.length; i += 1) {
       effectsRadios[i].addEventListener('change', onEffectChange);
     }
+
+    // очистка полей хэш-тегов и комментария
+    imgUpload.querySelector('.text__hashtags').value = '';
+    imgUpload.querySelector('.text__description').value = '';
   }
 
   // Закрыть превью фото

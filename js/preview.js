@@ -55,10 +55,14 @@
     bigPictureSocialCaption.textContent = photosElement.description;
     bigPicturelikesCount.textContent = photosElement.likes;
 
-    createNextCommentsFragment(SIZE_COMMENTS_FRAGMENT, true);
-
+    if (socialLoadmoreBtn.classList.contains('hidden')) {
+      socialLoadmoreBtn.classList.remove('hidden');
+    }
     socialLoadmoreBtn.focus();
     socialLoadmoreBtn.addEventListener('click', onLoadmoreClick);
+
+    createNextCommentsFragment(SIZE_COMMENTS_FRAGMENT, true);
+
     bigPictureCansel.addEventListener('click', hideBigPicture);
     document.addEventListener('keydown', onEscPress);
 
@@ -102,6 +106,11 @@
       }
       var newCommentElement = createNewComment(currentElement.comments[i]);
       fragment.appendChild(newCommentElement);
+    }
+
+    if ((countDisplaedComment + sizeFragment) >= currentElement.comments.length) {
+      socialLoadmoreBtn.classList.add('hidden');
+      console.log(socialLoadmoreBtn.classList);
     }
 
     bigPictureListComments.appendChild(fragment);

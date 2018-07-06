@@ -2,16 +2,16 @@
 
 (function () {
 
+  var imgFilters = document.querySelector('.img-filters');
+  var imgFilterButtons = imgFilters.querySelectorAll('.img-filters__button');
+
   // инициализация фильтров списка фотографий
   initialFilters();
 
   function initialFilters() {
 
-    var imgFilters = document.querySelector('.img-filters');
-
     imgFilters.classList.remove('img-filters--inactive');
 
-    var imgFilterButtons = imgFilters.querySelectorAll('.img-filters__button');
     for (var i = 0; i < imgFilterButtons.length; i += 1) {
       imgFilterButtons[i].addEventListener('click', onFilterClick);
     }
@@ -19,11 +19,11 @@
   }
 
   function onFilterClick(evt) {
-    applyFilter(evt.target.id);
+    applyFilter(evt.target);
   }
 
   // применить фильтр
-  function applyFilter(id) {
+  function applyFilter(element) {
 
     var picturesContainer = document.querySelector('.pictures');
     var pictureLinks = picturesContainer.querySelectorAll('.picture__link');
@@ -32,6 +32,8 @@
       picturesContainer.removeChild(item);
     });
 
+    imgFilters.querySelector('.img-filters__button--active').classList.remove('img-filters__button--active');
+    element.classList.add('img-filters__button--active');
 
     var filterMap = {
       'filter-popular': filterPopular,
@@ -39,7 +41,7 @@
       'filter-discussed': filterDiscussed
     };
 
-    (filterMap[id])();
+    (filterMap[element.id])();
 
   }
 
