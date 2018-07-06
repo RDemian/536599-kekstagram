@@ -19,7 +19,8 @@
   function onUpLoadChange(evtUpLoad) {
 
     evtUpLoad.stopPropagation();
-
+    evtUpLoad.preventDefault();
+    readFile();
     openPopup();
 
   }
@@ -48,9 +49,54 @@
       item.addEventListener('change', onEffectChange);
     });
 
+    // Обработчик изменения эффекта, перетаскивания
+    scalePin.addEventListener('mousedown', onMouseDown);
+
     // очистка полей хэш-тегов и комментария
     imgUpload.querySelector('.text__hashtags').value = '';
     imgUpload.querySelector('.text__description').value = '';
+
+    // отправка фото на сервер
+    imgUploadForm.addEventListener('submit', onImgSubmit);
+
+    // проверка хэштегов
+    window.hashtag.textHashtag.addEventListener('input', onHashtagChange);
+
+
+  }
+
+  function readFile() {
+
+    var DEFAULT_IMG = 'img/upload-default-image.jpg';
+    var imgPicture = imgPreview.querySelector('img');
+    var previewPicture = imgUpload.querySelectorAll('.effects__preview');
+    var file = uploadFile.files[0];
+    var reader = new FileReader();
+
+    imgPicture.src = DEFAULT_IMG;
+    previewPicture.forEach(function (item) {
+      item.style = '';
+    });
+
+    if (file.type === 'image/jpeg') {
+
+      reader.addEventListener('load', onReaderLoad);
+      reader.readAsDataURL(file);
+
+    }
+
+    function onReaderLoad() {
+      imgPicture.src = reader.result;
+      previewPicture.forEach(function (item) {
+        item.style = 'background-image: url(' + reader.result + ');';
+      });
+      reader.removeEventListener('load', onReaderLoad);
+    }
+
+  }
+
+  function onHashtagChange(evt) {
+    window.hashtag.validateHashtag(evt);
   }
 
   // Закрыть превью фото
@@ -94,11 +140,20 @@
       item.removeEventListener('change', onEffectChange);
     });
 
+    // Обработчик изменения эффекта, перетаскивания
+    scalePin.removeEventListener('mousedown', onMouseDown);
+
     if (imgPreview.contains(newMessageError)) {
       imgPreview.removeChild(newMessageError);
     }
+
+    // отправка фото на сервер
+    imgUploadForm.removeEventListener('submit', onImgSubmit);
     errorLinkAgain.removeEventListener('click', onAgainClick);
     errorLinkAnother.removeEventListener('click', onAnotherClick);
+
+    // проверка хэштегов
+    window.hashtag.textHashtag.removeEventListener('input', onHashtagChange);
 
   }
 
@@ -147,7 +202,6 @@
     var effectsPreview = targetElem.parentElement.querySelector('.effects__preview');
     var selectedEffect = effectsPreview.classList[1];
 
-    // imgPreview.style = '-webkit - filter: none; filter: none;';
     imgPreview.style.filter = '';
     imgPreview.classList.remove(imgPreview.classList[1]);
     imgPreview.classList.add(selectedEffect);
@@ -165,9 +219,6 @@
     window.utilits.setScaleLevel();
 
   }
-
-  // Обработчик изменения эффекта, перетаскивания
-  scalePin.addEventListener('mousedown', onMouseDown);
 
   function onMouseDown(evt) {
     window.utilits.onScaleDown(evt, changeEffectValue);
@@ -220,8 +271,6 @@
   var newMessageError = messageError.cloneNode(true);
   var errorLinkAgain = newMessageError.querySelector('.error__link--again');
   var errorLinkAnother = newMessageError.querySelector('.error__link--another');
-
-  imgUploadForm.addEventListener('submit', onImgSubmit);
 
   function onImgSubmit(evt) {
     window.backend.upLoad(new FormData(imgUploadForm), onLoad, onError);

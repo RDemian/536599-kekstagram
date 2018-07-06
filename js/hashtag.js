@@ -2,12 +2,13 @@
 
 (function () {
 
-  var textHashtag = document.querySelector('.text__hashtags');
-
-  textHashtag.addEventListener('input', onHashtagChange);
+  window.hashtag = {
+    textHashtag: document.querySelector('.text__hashtags'),
+    validateHashtag: validateHashtag
+  };
 
   // проверка введенного хэш-тега и изменение сообщения об ошибке
-  function onHashtagChange(evt) {
+  function validateHashtag(evt) {
     var MAX_COUNT_HASHTAG = 5;
     var MIN_LENGTH_HASHTAG = 2;
     var MAX_LENGTH_HASHTAG = 20;
@@ -58,7 +59,7 @@
       textValidity = textValidity + 'Одинаковых хэш-тегов быть не должно!';
     }
 
-    textHashtag.setCustomValidity(textValidity);
+    window.hashtag.textHashtag.setCustomValidity(textValidity);
 
   }
 
