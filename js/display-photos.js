@@ -5,8 +5,8 @@
   var picturesContainer = document.querySelector('.pictures');
 
   window.displayPhotos = {
-    loadPhotosArray: [],
-    currentPhotosArray: [],
+    loadedPhotos: [],
+    currentPhotos: [],
     appendPhotos: appendPhotos
   };
 
@@ -24,7 +24,7 @@
       newPicture.querySelector('.picture__stat--likes').textContent = addedPhotos[i].likes;
       newPicture.querySelector('.picture__stat--comments').textContent = addedPhotos[i].comments.length;
 
-      window.displayPhotos.currentPhotosArray[i] = addedPhotos[i];
+      window.displayPhotos.currentPhotos[i] = addedPhotos[i];
       fragment.appendChild(newPicture);
     }
 

@@ -166,7 +166,7 @@
   }
 
   function changeEffectValue() {
-    var persent = parseInt(scaleValue.value, 10) / 100; // проценты в число
+    var percent = parseInt(scaleValue.value, 10) / 100; // проценты в число
     var selectedEffect = imgPreview.classList[1];
     var minValue = 0;
     var maxValue = 1;
@@ -198,7 +198,7 @@
         break;
     }
 
-    effectValue = (minValue + (persent * maxValue));
+    effectValue = (minValue + (percent * maxValue));
     effectValue = Math.round(effectValue * 100) / 100; // округляем до сотых
     effectType = effectType + '(' + effectValue + effectMeasure + ')';
 

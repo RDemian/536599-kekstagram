@@ -9,6 +9,8 @@
   // проверка введенного хэш-тега и изменение сообщения об ошибке
   function onHashtagChange(evt) {
     var MAX_COUNT_HASHTAG = 5;
+    var MIN_LENGTH_HASHTAG = 2;
+    var MAX_LENGTH_HASHTAG = 20;
 
     var hashString = evt.target.value;
 
@@ -31,11 +33,11 @@
         textValidity = textValidity + 'Теги должны начинаться с символа \'#\'.' + ' ';
       }
 
-      if (currentHashtag.length < 2) {
+      if (currentHashtag.length < MIN_LENGTH_HASHTAG) {
         textValidity = textValidity + 'Хеш-тег не может состоять только из одной решётки.' + ' ';
       }
 
-      if (currentHashtag.length > 20) {
+      if (currentHashtag.length > MAX_LENGTH_HASHTAG) {
         textValidity = textValidity + 'Максимальная длина хэш-тега не более 20 символов.' + ' ';
       }
 

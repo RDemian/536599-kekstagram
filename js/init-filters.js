@@ -6,9 +6,9 @@
   var imgFilterButtons = imgFilters.querySelectorAll('.img-filters__button');
 
   // инициализация фильтров списка фотографий
-  initialFilters();
+  initFilters();
 
-  function initialFilters() {
+  function initFilters() {
 
     imgFilters.classList.remove('img-filters--inactive');
 
@@ -46,16 +46,16 @@
   }
 
   function filterPopular() {
-    window.displayPhotos.appendPhotos(window.displayPhotos.loadPhotosArray);
+    window.displayPhotos.appendPhotos(window.displayPhotos.loadedPhotos);
   }
 
   function filterNew() {
 
     var COUNT_NEW_PHOTO = 10;
-    var indexElem = window.utilits.getRandomInt(1, window.displayPhotos.loadPhotosArray.length);
+    var indexElem = window.utilits.getRandomInt(1, window.displayPhotos.loadedPhotos.length);
 
-    var sortPhotos = window.displayPhotos.loadPhotosArray.slice(indexElem, window.displayPhotos.loadPhotosArray.length);
-    sortPhotos = sortPhotos.concat(window.displayPhotos.loadPhotosArray.slice(0, indexElem));
+    var sortPhotos = window.displayPhotos.loadedPhotos.slice(indexElem, window.displayPhotos.loadedPhotos.length);
+    sortPhotos = sortPhotos.concat(window.displayPhotos.loadedPhotos.slice(0, indexElem));
 
 
     sortPhotos = sortPhotos.slice(0, COUNT_NEW_PHOTO);
@@ -66,7 +66,7 @@
 
   function filterDiscussed() {
 
-    var sortPhotos = window.displayPhotos.loadPhotosArray.slice();
+    var sortPhotos = window.displayPhotos.loadedPhotos.slice();
 
     sortPhotos = sortPhotos.sort(function (n1, n2) {
       n1 = n1.comments.length;
