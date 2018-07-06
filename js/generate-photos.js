@@ -45,7 +45,7 @@
   }
 
   // ф-ция для заполнения тестового массива
-  var fillPhotos = function (count) {
+  function fillPhotos(count) {
     var i = 0;
     for (i = 0; i < count; i += 1) {
       var currentPhoto = generatePhoto(i + 1);
@@ -53,7 +53,7 @@
     }
 
     return window.photos;
-  };
+  }
 
   // Вызываем функцию заполнения тестового массива с нужным количеством фото
   window.photos = fillPhotos(COUNT_PHOTOS);

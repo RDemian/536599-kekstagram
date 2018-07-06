@@ -22,7 +22,6 @@
 
     var textValidity = '';
 
-
     for (var i = 0; i < hashtags.length; i += 1) {
 
       textValidity = '';
@@ -65,7 +64,7 @@
 
   function hasDuplicates(array) {
     var valuesSoFar = [];
-    for (var i = 0; i < array.length; ++i) {
+    for (var i = 0; i < array.length; i += 1) {
       var value = array[i].toLowerCase();
       if (valuesSoFar.indexOf(value) !== -1) {
         return true;

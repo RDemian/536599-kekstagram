@@ -24,7 +24,7 @@
 
   }
 
-  var uploadCansel = imgUpload.querySelector('.img-upload__cancel');
+  var uploadCancel = imgUpload.querySelector('.img-upload__cancel');
   function openPopup() {
 
     window.utilits.addRemoveClassHidden(imgOverlay);
@@ -35,18 +35,18 @@
     // Обработчик закрытия окна загрузки файла
     document.addEventListener('keydown', onUploadEscPress);
 
-    uploadCansel.addEventListener('click', onUploadCancelClick);
-    uploadCansel.addEventListener('keydown', onUploadEnterPres);
+    uploadCancel.addEventListener('click', onUploadCancelClick);
+    uploadCancel.addEventListener('keydown', onUploadEnterPres);
 
     // Обработчики изменения мастштаба фото
-    resizeControlMinus.addEventListener('click', onResizeClick);
-    resizeControlPlus.addEventListener('click', onResizeClick);
+    resizeControlMinus.addEventListener('click', onMinusClick);
+    resizeControlPlus.addEventListener('click', onPlusClick);
 
     // добавление обаработчиков смены эффектов
 
-    for (var i = 0; i < effectsRadios.length; i += 1) {
-      effectsRadios[i].addEventListener('change', onEffectChange);
-    }
+    effectsRadios.forEach(function (item) {
+      item.addEventListener('change', onEffectChange);
+    });
 
     // очистка полей хэш-тегов и комментария
     imgUpload.querySelector('.text__hashtags').value = '';
@@ -80,19 +80,19 @@
 
     window.utilits.addRemoveClassHidden(imgOverlay);
 
-    uploadCansel.removeEventListener('click', onUploadCancelClick);
-    uploadCansel.removeEventListener('keydown', onUploadEnterPres);
+    uploadCancel.removeEventListener('click', onUploadCancelClick);
+    uploadCancel.removeEventListener('keydown', onUploadEnterPres);
     document.removeEventListener('keydown', onUploadEscPress);
 
     uploadFile.value = '';
 
-    resizeControlMinus.removeEventListener('click', onResizeClick);
+    resizeControlMinus.removeEventListener('click', onMinusClick);
 
-    resizeControlPlus.removeEventListener('click', onResizeClick);
+    resizeControlPlus.removeEventListener('click', onPlusClick);
 
-    for (var i = 0; i < effectsRadios.length; i += 1) {
-      effectsRadios[i].removeEventListener('change', onEffectChange);
-    }
+    effectsRadios.forEach(function (item) {
+      item.removeEventListener('change', onEffectChange);
+    });
 
     if (imgPreview.contains(newMessageError)) {
       imgPreview.removeChild(newMessageError);
@@ -105,14 +105,22 @@
   // *** Применение фильтров ***
 
   // Изменение масштаба
-  function onResizeClick(evt) {
+  function onMinusClick(evt) {
+    evt.stopPropagation();
+    resizeScale(evt);
+  }
+
+  function onPlusClick(evt) {
+    evt.stopPropagation();
+    resizeScale(evt);
+  }
+
+  function resizeScale(evt) {
 
     var scaleValue = resizeControlValue.value;
     var SCALE_STEP = 25;
     var MIN_SCALE = 25;
     var MAX_SCALE = 100;
-
-    evt.stopPropagation();
 
     scaleValue = parseInt(scaleValue.slice(0, -1), 10); // обрезаем знак % в конце строки и преобразуем в число
     if (evt.target === resizeControlMinus) {

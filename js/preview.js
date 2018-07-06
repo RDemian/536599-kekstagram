@@ -6,9 +6,8 @@
   // ф-ция показа увеличенного изображения
   var bigPicture = document.querySelector('.big-picture');
   // *********************** Обработка клика по фото **********************************************
-  var picturesContainer = document.querySelector('.pictures');
-  var currentElement; // текущий элемент в массиве отображаемых фото window.displayPhotos.currentPhotosArray
-  picturesContainer.addEventListener('click', onPictureClick);
+  var currentElement; // текущий элемент в массиве отображаемых фото window.displayPhotos.currentPhotos
+  window.displayPhotos.picturesContainer.addEventListener('click', onPictureClick);
 
   function onPictureClick(evt) {
     var pictureLink = evt.target;
@@ -16,10 +15,10 @@
     pictureLink = returnPictureLink(pictureLink);
 
     // находим элемент в массиве фотографий
-    var pictureLinks = picturesContainer.querySelectorAll('.picture__link');
+    var pictureLinks = window.displayPhotos.picturesContainer.querySelectorAll('.picture__link');
     for (var i = 0; i < pictureLinks.length; i += 1) {
       if (pictureLinks[i] === pictureLink) {
-        currentElement = window.displayPhotos.currentPhotosArray[i];
+        currentElement = window.displayPhotos.currentPhotos[i];
         displayBigPicture(currentElement);
         break;
       }
@@ -63,18 +62,18 @@
 
     createNextCommentsFragment(SIZE_COMMENTS_FRAGMENT, true);
 
-    bigPictureCancel.addEventListener('click', hideBigPicture);
+    bigPictureCancel.addEventListener('click', onHideBigPicture);
     document.addEventListener('keydown', onEscPress);
 
   }
 
   function onEscPress(evt) {
-    window.utilits.isEscEvent(evt, hideBigPicture);
+    window.utilits.isEscEvent(evt, onHideBigPicture);
   }
 
-  function hideBigPicture() {
+  function onHideBigPicture() {
     window.utilits.addRemoveClassHidden(bigPicture);
-    bigPictureCancel.removeEventListener('click', hideBigPicture);
+    bigPictureCancel.removeEventListener('click', onHideBigPicture);
     socialLoadmoreBtn.removeEventListener('click', onLoadmoreClick);
     document.removeEventListener('keydown', onEscPress);
   }

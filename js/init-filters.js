@@ -12,9 +12,9 @@
 
     imgFilters.classList.remove('img-filters--inactive');
 
-    for (var i = 0; i < imgFilterButtons.length; i += 1) {
-      imgFilterButtons[i].addEventListener('click', onFilterClick);
-    }
+    imgFilterButtons.forEach(function (item) {
+      item.addEventListener('click', onFilterClick);
+    });
 
   }
 
@@ -25,11 +25,10 @@
   // применить фильтр
   function applyFilter(element) {
 
-    var picturesContainer = document.querySelector('.pictures');
-    var pictureLinks = picturesContainer.querySelectorAll('.picture__link');
+    var pictureLinks = window.displayPhotos.picturesContainer.querySelectorAll('.picture__link');
     // очистка контейнера фотографий
     pictureLinks.forEach(function (item) {
-      picturesContainer.removeChild(item);
+      window.displayPhotos.picturesContainer.removeChild(item);
     });
 
     imgFilters.querySelector('.img-filters__button--active').classList.remove('img-filters__button--active');
