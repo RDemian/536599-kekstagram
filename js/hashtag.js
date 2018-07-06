@@ -2,13 +2,16 @@
 
 (function () {
 
-  var textHashtag = document.querySelector('.text__hashtags');
-
-  textHashtag.addEventListener('input', onHashtagChange);
+  window.hashtag = {
+    textHashtag: document.querySelector('.text__hashtags'),
+    validateHashtag: validateHashtag
+  };
 
   // проверка введенного хэш-тега и изменение сообщения об ошибке
-  function onHashtagChange(evt) {
+  function validateHashtag(evt) {
     var MAX_COUNT_HASHTAG = 5;
+    var MIN_LENGTH_HASHTAG = 2;
+    var MAX_LENGTH_HASHTAG = 20;
 
     var hashString = evt.target.value;
 
@@ -24,16 +27,26 @@
 
       textValidity = '';
 
-      if (hashtags[i].slice(0, 1) !== '#') {
+      var currentHashtag = hashtags[i];
+
+      if (currentHashtag.slice(0, 1) !== '#') {
         textValidity = textValidity + 'Теги должны начинаться с символа \'#\'.' + ' ';
       }
 
-      if (hashtags[i].length > 20) {
+      if (currentHashtag.length < MIN_LENGTH_HASHTAG) {
+        textValidity = textValidity + 'Хеш-тег не может состоять только из одной решётки.' + ' ';
+      }
+
+      if (currentHashtag.length > MAX_LENGTH_HASHTAG) {
         textValidity = textValidity + 'Максимальная длина хэш-тега не более 20 символов.' + ' ';
       }
 
-      if (hashtags[i].indexOf('#', 1) > -1) {
+      if (currentHashtag.indexOf('#', 1) > -1) {
         textValidity = textValidity + 'Теги должны быть разделены пробелами.' + ' ';
+      }
+
+      if (textValidity !== '') {
+        break;
       }
 
     }
@@ -46,13 +59,13 @@
       textValidity = textValidity + 'Одинаковых хэш-тегов быть не должно!';
     }
 
-    textHashtag.setCustomValidity(textValidity);
+    window.hashtag.textHashtag.setCustomValidity(textValidity);
 
   }
 
   function hasDuplicates(array) {
     var valuesSoFar = [];
-    for (var i = 0; i < array.length; ++i) {
+    for (var i = 0; i < array.length; i += 1) {
       var value = array[i].toLowerCase();
       if (valuesSoFar.indexOf(value) !== -1) {
         return true;

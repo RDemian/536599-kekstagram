@@ -19,12 +19,13 @@
   function onUpLoadChange(evtUpLoad) {
 
     evtUpLoad.stopPropagation();
-
+    evtUpLoad.preventDefault();
+    readFile();
     openPopup();
 
   }
 
-  var uploadCansel = imgUpload.querySelector('.img-upload__cancel');
+  var uploadCancel = imgUpload.querySelector('.img-upload__cancel');
   function openPopup() {
 
     window.utilits.addRemoveClassHidden(imgOverlay);
@@ -35,18 +36,67 @@
     // Обработчик закрытия окна загрузки файла
     document.addEventListener('keydown', onUploadEscPress);
 
-    uploadCansel.addEventListener('click', onUploadCancelClick);
-    uploadCansel.addEventListener('keydown', onUploadEnterPres);
+    uploadCancel.addEventListener('click', onUploadCancelClick);
+    uploadCancel.addEventListener('keydown', onUploadEnterPres);
 
     // Обработчики изменения мастштаба фото
-    resizeControlMinus.addEventListener('click', onResizeClick);
-    resizeControlPlus.addEventListener('click', onResizeClick);
+    resizeControlMinus.addEventListener('click', onMinusClick);
+    resizeControlPlus.addEventListener('click', onPlusClick);
 
     // добавление обаработчиков смены эффектов
 
-    for (var i = 0; i < effectsRadios.length; i += 1) {
-      effectsRadios[i].addEventListener('change', onEffectChange);
+    effectsRadios.forEach(function (item) {
+      item.addEventListener('change', onEffectChange);
+    });
+
+    // Обработчик изменения эффекта, перетаскивания
+    scalePin.addEventListener('mousedown', onMouseDown);
+
+    // очистка полей хэш-тегов и комментария
+    imgUpload.querySelector('.text__hashtags').value = '';
+    imgUpload.querySelector('.text__description').value = '';
+
+    // отправка фото на сервер
+    imgUploadForm.addEventListener('submit', onImgSubmit);
+
+    // проверка хэштегов
+    window.hashtag.textHashtag.addEventListener('input', onHashtagChange);
+
+
+  }
+
+  function readFile() {
+
+    var DEFAULT_IMG = 'img/upload-default-image.jpg';
+    var imgPicture = imgPreview.querySelector('img');
+    var previewPicture = imgUpload.querySelectorAll('.effects__preview');
+    var file = uploadFile.files[0];
+    var reader = new FileReader();
+
+    imgPicture.src = DEFAULT_IMG;
+    previewPicture.forEach(function (item) {
+      item.style = '';
+    });
+
+    if (file.type === 'image/jpeg') {
+
+      reader.addEventListener('load', onReaderLoad);
+      reader.readAsDataURL(file);
+
     }
+
+    function onReaderLoad() {
+      imgPicture.src = reader.result;
+      previewPicture.forEach(function (item) {
+        item.style = 'background-image: url(' + reader.result + ');';
+      });
+      reader.removeEventListener('load', onReaderLoad);
+    }
+
+  }
+
+  function onHashtagChange(evt) {
+    window.hashtag.validateHashtag(evt);
   }
 
   // Закрыть превью фото
@@ -76,39 +126,56 @@
 
     window.utilits.addRemoveClassHidden(imgOverlay);
 
-    uploadCansel.removeEventListener('click', onUploadCancelClick);
-    uploadCansel.removeEventListener('keydown', onUploadEnterPres);
+    uploadCancel.removeEventListener('click', onUploadCancelClick);
+    uploadCancel.removeEventListener('keydown', onUploadEnterPres);
     document.removeEventListener('keydown', onUploadEscPress);
 
     uploadFile.value = '';
 
-    resizeControlMinus.removeEventListener('click', onResizeClick);
+    resizeControlMinus.removeEventListener('click', onMinusClick);
 
-    resizeControlPlus.removeEventListener('click', onResizeClick);
+    resizeControlPlus.removeEventListener('click', onPlusClick);
 
-    for (var i = 0; i < effectsRadios.length; i += 1) {
-      effectsRadios[i].removeEventListener('change', onEffectChange);
-    }
+    effectsRadios.forEach(function (item) {
+      item.removeEventListener('change', onEffectChange);
+    });
+
+    // Обработчик изменения эффекта, перетаскивания
+    scalePin.removeEventListener('mousedown', onMouseDown);
 
     if (imgPreview.contains(newMessageError)) {
       imgPreview.removeChild(newMessageError);
     }
+
+    // отправка фото на сервер
+    imgUploadForm.removeEventListener('submit', onImgSubmit);
     errorLinkAgain.removeEventListener('click', onAgainClick);
     errorLinkAnother.removeEventListener('click', onAnotherClick);
+
+    // проверка хэштегов
+    window.hashtag.textHashtag.removeEventListener('input', onHashtagChange);
 
   }
 
   // *** Применение фильтров ***
 
   // Изменение масштаба
-  function onResizeClick(evt) {
+  function onMinusClick(evt) {
+    evt.stopPropagation();
+    resizeScale(evt);
+  }
+
+  function onPlusClick(evt) {
+    evt.stopPropagation();
+    resizeScale(evt);
+  }
+
+  function resizeScale(evt) {
 
     var scaleValue = resizeControlValue.value;
     var SCALE_STEP = 25;
     var MIN_SCALE = 25;
     var MAX_SCALE = 100;
-
-    evt.stopPropagation();
 
     scaleValue = parseInt(scaleValue.slice(0, -1), 10); // обрезаем знак % в конце строки и преобразуем в число
     if (evt.target === resizeControlMinus) {
@@ -135,7 +202,6 @@
     var effectsPreview = targetElem.parentElement.querySelector('.effects__preview');
     var selectedEffect = effectsPreview.classList[1];
 
-    // imgPreview.style = '-webkit - filter: none; filter: none;';
     imgPreview.style.filter = '';
     imgPreview.classList.remove(imgPreview.classList[1]);
     imgPreview.classList.add(selectedEffect);
@@ -154,15 +220,12 @@
 
   }
 
-  // Обработчик изменения эффекта, перетаскивания
-  scalePin.addEventListener('mousedown', onMouseDown);
-
   function onMouseDown(evt) {
     window.utilits.onScaleDown(evt, changeEffectValue);
   }
 
   function changeEffectValue() {
-    var persent = parseInt(scaleValue.value, 10) / 100; // проценты в число
+    var percent = parseInt(scaleValue.value, 10) / 100; // проценты в число
     var selectedEffect = imgPreview.classList[1];
     var minValue = 0;
     var maxValue = 1;
@@ -194,7 +257,7 @@
         break;
     }
 
-    effectValue = (minValue + (persent * maxValue));
+    effectValue = (minValue + (percent * maxValue));
     effectValue = Math.round(effectValue * 100) / 100; // округляем до сотых
     effectType = effectType + '(' + effectValue + effectMeasure + ')';
 
@@ -209,8 +272,6 @@
   var errorLinkAgain = newMessageError.querySelector('.error__link--again');
   var errorLinkAnother = newMessageError.querySelector('.error__link--another');
 
-  imgUploadForm.addEventListener('submit', onImgSubmit);
-
   function onImgSubmit(evt) {
     window.backend.upLoad(new FormData(imgUploadForm), onLoad, onError);
     evt.preventDefault();
@@ -218,7 +279,7 @@
 
   function onLoad() {
     // закрываем форму после отправки изображения на сервер
-    imgOverlay.classList.add('hidden');
+    closePopup();
   }
 
   function onError(message) {

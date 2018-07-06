@@ -6,9 +6,8 @@
   // ф-ция показа увеличенного изображения
   var bigPicture = document.querySelector('.big-picture');
   // *********************** Обработка клика по фото **********************************************
-  var picturesContainer = document.querySelector('.pictures');
-  var currentElement; // текущий элемент в массиве отображаемых фото window.displayPhotos.currentPhotosArray
-  picturesContainer.addEventListener('click', onPictureClick);
+  var currentElement; // текущий элемент в массиве отображаемых фото window.displayPhotos.currentPhotos
+  window.displayPhotos.picturesContainer.addEventListener('click', onPictureClick);
 
   function onPictureClick(evt) {
     var pictureLink = evt.target;
@@ -16,10 +15,10 @@
     pictureLink = returnPictureLink(pictureLink);
 
     // находим элемент в массиве фотографий
-    var pictureLinks = picturesContainer.querySelectorAll('.picture__link');
+    var pictureLinks = window.displayPhotos.picturesContainer.querySelectorAll('.picture__link');
     for (var i = 0; i < pictureLinks.length; i += 1) {
       if (pictureLinks[i] === pictureLink) {
-        currentElement = window.displayPhotos.currentPhotosArray[i];
+        currentElement = window.displayPhotos.currentPhotos[i];
         displayBigPicture(currentElement);
         break;
       }
@@ -39,7 +38,7 @@
   }
 
   // показ увеличенного изображения
-  var bigPictureCansel = bigPicture.querySelector('.big-picture__cancel');
+  var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
   var socialLoadmoreBtn = bigPicture.querySelector('.social__loadmore');
 
 
@@ -55,22 +54,26 @@
     bigPictureSocialCaption.textContent = photosElement.description;
     bigPicturelikesCount.textContent = photosElement.likes;
 
-    createNextCommentsFragment(SIZE_COMMENTS_FRAGMENT, true);
-
+    if (socialLoadmoreBtn.classList.contains('hidden')) {
+      socialLoadmoreBtn.classList.remove('hidden');
+    }
     socialLoadmoreBtn.focus();
     socialLoadmoreBtn.addEventListener('click', onLoadmoreClick);
-    bigPictureCansel.addEventListener('click', hideBigPicture);
+
+    createNextCommentsFragment(SIZE_COMMENTS_FRAGMENT, true);
+
+    bigPictureCancel.addEventListener('click', onHideBigPicture);
     document.addEventListener('keydown', onEscPress);
 
   }
 
   function onEscPress(evt) {
-    window.utilits.isEscEvent(evt, hideBigPicture);
+    window.utilits.isEscEvent(evt, onHideBigPicture);
   }
 
-  function hideBigPicture() {
+  function onHideBigPicture() {
     window.utilits.addRemoveClassHidden(bigPicture);
-    bigPictureCansel.removeEventListener('click', hideBigPicture);
+    bigPictureCancel.removeEventListener('click', onHideBigPicture);
     socialLoadmoreBtn.removeEventListener('click', onLoadmoreClick);
     document.removeEventListener('keydown', onEscPress);
   }
@@ -94,22 +97,26 @@
     }
 
     var fragment = document.createDocumentFragment();
-    var countDisplaedComment = bigPictureListComments.querySelectorAll('.social__comment').length;
+    var countDisplayedComment = bigPictureListComments.querySelectorAll('.social__comment').length;
 
-    for (var i = countDisplaedComment; i < currentElement.comments.length; i += 1) {
-      if (i === (sizeFragment + countDisplaedComment)) {
+    for (var i = countDisplayedComment; i < currentElement.comments.length; i += 1) {
+      if (i === (sizeFragment + countDisplayedComment)) {
         break;
       }
       var newCommentElement = createNewComment(currentElement.comments[i]);
       fragment.appendChild(newCommentElement);
     }
 
+    if ((countDisplayedComment + sizeFragment) >= currentElement.comments.length) {
+      socialLoadmoreBtn.classList.add('hidden');
+    }
+
     bigPictureListComments.appendChild(fragment);
 
     var socialCommentCount = bigPicture.querySelector('.social__comment-count');
     var commentCount = currentElement.comments.length;
-    countDisplaedComment = bigPictureListComments.querySelectorAll('.social__comment').length;
-    socialCommentCount.innerHTML = '' + countDisplaedComment + ' из <span class="comments-count">' + commentCount + '</span> комментариев';
+    countDisplayedComment = bigPictureListComments.querySelectorAll('.social__comment').length;
+    socialCommentCount.innerHTML = '' + countDisplayedComment + ' из <span class="comments-count">' + commentCount + '</span> комментариев';
 
   }
 
